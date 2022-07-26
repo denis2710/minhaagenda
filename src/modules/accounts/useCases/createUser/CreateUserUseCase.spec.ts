@@ -14,7 +14,7 @@ describe('Create User', () => {
 
     newUser = {
       username: 'fakeUserName',
-      userEmail: 'falkeUserEmail@email.com',
+      userEmail: 'fakeUser@email.com',
       userPassword: 'fakeUserPassword',
       userConfirmPassword: 'fakeUserPassword',
     }
@@ -26,10 +26,11 @@ describe('Create User', () => {
 
     const userSaved = await userRepository.findByEmail(newUser.userEmail)
 
-    expect(userSaved).toHaveProperty('id')
-    expect(userSaved.username).toBe(newUser.userEmail)
+    expect(userSaved.username).toBe(newUser.username)
     expect(userSaved.email).toBe(newUser.userEmail)
   });
+
+  it.todo('should recive a valid uuid when create a user')
 
 
   it.todo('should return an error if the user already exists');

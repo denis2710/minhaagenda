@@ -1,9 +1,13 @@
 import User from "../../accounts/models/User";
 import IUserRepository from "../IUserRepository";
 
+
 class UserRepositoryInMemory implements IUserRepository {
-  create(_user: User): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  database: User[] = []
+
+  async create(user: User): Promise<void> {
+    this.database.push(user)
   }
 
   delete(_id: string): Promise<void> {
@@ -18,8 +22,8 @@ class UserRepositoryInMemory implements IUserRepository {
     throw new Error("Method not implemented.");
   }
 
-  findByEmail(_email: string): Promise<User> {
-    throw new Error("Method not implemented.");
+  async findByEmail(email: string): Promise<User> {
+    return this.database.find(user => user.email === email)
   }
 
 }
