@@ -1,3 +1,5 @@
+import {v4 as uuidV4} from 'uuid';
+
 class User {
 
   id: string;
@@ -15,12 +17,17 @@ class User {
                 createdAt = undefined,
                 updatedAt = undefined
               }: User) {
+
     this.id = id;
     this.username = username;
     this.email = email;
     this.password = password;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
+
+    if (!id) {
+      this.id = uuidV4();
+    }
   }
 
 
