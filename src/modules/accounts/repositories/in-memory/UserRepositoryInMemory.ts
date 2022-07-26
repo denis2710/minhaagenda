@@ -1,4 +1,4 @@
-import User from "../../accounts/models/User";
+import User from "../../models/User";
 import IUserRepository from "../IUserRepository";
 
 

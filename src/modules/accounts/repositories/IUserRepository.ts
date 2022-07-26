@@ -1,4 +1,4 @@
-import User from "../accounts/models/User";
+import User from "../models/User";
 
 interface IUserRepository {
   create(user: User): Promise<void>;
