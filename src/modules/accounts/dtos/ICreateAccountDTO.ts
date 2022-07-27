@@ -1,8 +1,8 @@
-interface ICreateUserDTO {
+interface ICreateAccountDTO {
   username: string;
   userEmail: string;
   userPassword: string;
   userConfirmPassword: string;
 }
 
-export default ICreateUserDTO;
+export default ICreateAccountDTO;

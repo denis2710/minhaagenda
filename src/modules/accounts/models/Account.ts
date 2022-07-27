@@ -1,6 +1,6 @@
 import {v4 as uuidV4} from 'uuid';
 
-class User {
+class Account {
 
   id: string;
   username: string;
@@ -16,7 +16,7 @@ class User {
                 password = undefined,
                 createdAt = undefined,
                 updatedAt = undefined
-              }: User) {
+              }: Account) {
 
     this.id = id;
     this.username = username;
@@ -33,4 +33,4 @@ class User {
 
 }
 
-export default User;
+export default Account;
