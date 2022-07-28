@@ -10,6 +10,9 @@ interface IAccountRepository {
   findById(id: string): Promise<Account | undefined>;
 
   findByEmail(email: string): Promise<Account | undefined>;
+
+  findByUsername(username: string): Promise<Account | undefined>;
+
 }
 
 export default IAccountRepository;

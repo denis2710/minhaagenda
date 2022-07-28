@@ -3,11 +3,14 @@ import IAccountRepository from "../../repositories/IAccountRepository";
 import Account from "../../models/Account";
 import {validateEmail} from "../../../../shared/utils/validateEmail";
 import {AppError} from "../../../../shared/errors/AppError";
-import {hash} from "bcryptjs";
 import {generateAccountToken} from "../../shared/utils/generateAccountToken";
 
-interface ICreateUserUseCaseResponse {
-  user: Account;
+export interface ICreateAccountUseCaseResponse {
+  account: {
+    id: string;
+    username: string;
+    email: string;
+  };
   token: string;
 }
 
@@ -18,29 +21,31 @@ class CreateAccountUseCase {
   }
 
 
-  async execute(account: ICreateAccountDTO): Promise<ICreateUserUseCaseResponse> {
+  async execute(account: ICreateAccountDTO): Promise<ICreateAccountUseCaseResponse> {
 
     const {username, userEmail, userPassword, userConfirmPassword} = account;
 
     await this.doCreateAccountValidations(username, userEmail, userPassword, userConfirmPassword);
-
-    const passwordHash = await hash(userPassword, 8);
-
+    
     const newAccount = new Account({
       id: undefined,
       username,
       email: userEmail,
-      password: passwordHash,
+      password: userPassword,
+      active: true,
     })
 
     await this.accountRepository.create(newAccount);
 
     const token = generateAccountToken(newAccount);
 
-    delete newAccount.password
 
     return {
-      user: newAccount,
+      account: {
+        id: newAccount.id,
+        email: newAccount.email,
+        username: newAccount.username,
+      },
       token
     }
 

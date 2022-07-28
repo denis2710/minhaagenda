@@ -4,7 +4,6 @@ import AccountRepositoryInMemory from "../../repositories/in-memory/AccountRepos
 import IAccountRepository from "../../repositories/IAccountRepository";
 import {validate as uuidValidate} from 'uuid';
 import {AppError} from "../../../../shared/errors/AppError";
-import './../../../../shared/utils/loadEnvVars';
 import {verify} from "jsonwebtoken";
 
 let createAccountUseCase: CreateAccountUseCase;
@@ -210,5 +209,14 @@ describe('Create Account', () => {
 
     expect(sub).toBe(accountSaved.id)
   });
+
+  it('should set active account as true when create a new account', async () => {
+    await createAccountUseCase.execute(newAccount)
+
+    const accountSaved = await accountRepository.findByEmail(newAccount.userEmail)
+
+    expect(accountSaved.active).toBe(true)
+
+  })
 
 })

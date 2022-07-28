@@ -14,16 +14,27 @@ class AccountRepositoryInMemory implements IAccountRepository {
     throw new Error("Method not implemented.");
   }
 
-  update(_account: Account): Promise<void> {
-    throw new Error("Method not implemented.");
+  async update(account: Account): Promise<void> {
+    const accountIndex = this.database.findIndex(a => a.id === account.id)
+
+    if (accountIndex === -1) {
+      throw new Error("Account not found")
+    }
+
+    this.database[accountIndex] = account
+
   }
 
-  findById(_id: string): Promise<Account> {
-    throw new Error("Method not implemented.");
+  async findById(id: string): Promise<Account> {
+    return this.database.find(account => account.id === id)
   }
 
   async findByEmail(email: string): Promise<Account> {
     return this.database.find(account => account.email === email)
+  }
+
+  async findByUsername(username: string): Promise<Account | undefined> {
+    return this.database.find(account => account.username === username)
   }
 
 }
