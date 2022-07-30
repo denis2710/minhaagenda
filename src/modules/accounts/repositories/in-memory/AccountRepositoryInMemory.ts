@@ -1,5 +1,5 @@
 import Account from "../../models/Account";
-import IAccountRepository from "../IAccountRepository";
+import IAccountRepository, {IQueryParams} from "../IAccountRepository";
 
 
 class AccountRepositoryInMemory implements IAccountRepository {
@@ -10,8 +10,14 @@ class AccountRepositoryInMemory implements IAccountRepository {
     this.database.push(account)
   }
 
-  delete(_id: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async delete(id: string): Promise<void> {
+    const accountIndex = this.database.findIndex(a => a.id === id)
+
+    if (accountIndex === -1) {
+      throw new Error("Account not found")
+    }
+
+    this.database.splice(accountIndex, 1)
   }
 
   async update(account: Account): Promise<void> {
@@ -23,6 +29,46 @@ class AccountRepositoryInMemory implements IAccountRepository {
 
     this.database[accountIndex] = account
 
+  }
+
+  async findAll(): Promise<Account[]> {
+    return this.database
+  }
+
+  async findWithParameters(queryParams: IQueryParams): Promise<Account[]> {
+    let accountsFiltered = [...this.database]
+
+    if (queryParams.query) {
+      const findActive = queryParams.query.active
+
+      if (findActive) {
+        accountsFiltered = accountsFiltered.filter(account => account.active)
+      } else {
+        accountsFiltered = accountsFiltered.filter(account => !account.active)
+      }
+    }
+
+    if (queryParams.sort) {
+      accountsFiltered.sort((a, b) => {
+        if (queryParams.order === 'asc' || queryParams.order === undefined) {
+          return a[queryParams.sort] > b[queryParams.sort] ? 1 : -1
+        }
+
+        if (queryParams.order === 'desc') {
+          return a[queryParams.sort] < b[queryParams.sort] ? 1 : -1
+        }
+
+        return 0
+      })
+    }
+
+    if (queryParams.limit && queryParams.offset) {
+      const start = queryParams.limit * (queryParams.offset - 1)
+      const end = start + queryParams.limit
+      accountsFiltered = accountsFiltered.slice(start, end)
+    }
+
+    return accountsFiltered
   }
 
   async findById(id: string): Promise<Account> {

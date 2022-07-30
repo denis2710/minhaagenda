@@ -3,7 +3,7 @@ import {generateAccountToken} from "../shared/utils/generateAccountToken";
 import {compareSync, hashSync} from "bcryptjs";
 
 interface ICreateAccount {
-  id: string;
+  id?: string;
   username: string;
   email: string;
   password?: string;

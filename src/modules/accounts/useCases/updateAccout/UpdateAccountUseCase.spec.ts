@@ -75,12 +75,10 @@ describe('Update Account', () => {
     accountToUpdate.password = 'newPassword';
 
     await updateAccountUseCase.execute(accountToUpdate)
-    //
-    // const accountUpdated = await accountRepository.findById(accountToUpdate.id)
-    //
-    // const newHashPassoword = await accountUpdated.getPasswordHash()
-    //
-    // expect(accountUpdated.password).toBe(newHashPassowrd)
+
+    const accountUpdated = await accountRepository.findById(accountToUpdate.id)
+
+    expect(accountUpdated.comparePassword('newPassword')).toBe(true)
   })
 
   it('should not update account password to a weak password', async () => {
@@ -127,6 +125,58 @@ describe('Update Account', () => {
       await updateAccountUseCase.execute(accountToUpdate)
     } catch (e) {
       expect(e.message).toBe('Email is invalid')
+      expect(e.statusCode).toBe(400)
+    }
+  })
+
+  it('should not update a account email to other existent email', async () => {
+
+    accountToCreate = {
+      username: 'fakeUserName',
+      userEmail: 'otherAccountEmail@email.com',
+      userPassword: 'F4k3#U$3r#P4$$w0rd',
+      userConfirmPassword: 'F4k3#U$3r#P4$$w0rd',
+    }
+
+    await createAccountUseCase.execute(accountToCreate)
+
+
+    accountToUpdate.email = 'otherAccountEmail@email.com';
+
+    await expect(async () => {
+      await updateAccountUseCase.execute(accountToUpdate)
+    }).rejects.toBeInstanceOf(AppError)
+
+    try {
+      await updateAccountUseCase.execute(accountToUpdate)
+    } catch (e) {
+      expect(e.message).toBe('Email already exists')
+      expect(e.statusCode).toBe(400)
+    }
+  })
+
+  it('should not update a account username to other existent username', async () => {
+
+    accountToCreate = {
+      username: 'otherAccountUsername',
+      userEmail: 'otherAccountEmail@email.com',
+      userPassword: 'F4k3#U$3r#P4$$w0rd',
+      userConfirmPassword: 'F4k3#U$3r#P4$$w0rd',
+    }
+
+    await createAccountUseCase.execute(accountToCreate)
+
+
+    accountToUpdate.username = 'otherAccountUsername';
+
+    await expect(async () => {
+      await updateAccountUseCase.execute(accountToUpdate)
+    }).rejects.toBeInstanceOf(AppError)
+
+    try {
+      await updateAccountUseCase.execute(accountToUpdate)
+    } catch (e) {
+      expect(e.message).toBe('Username already exists')
       expect(e.statusCode).toBe(400)
     }
   })
